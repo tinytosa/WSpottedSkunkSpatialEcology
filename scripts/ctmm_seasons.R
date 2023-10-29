@@ -200,3 +200,67 @@ corearea <- separate(corearea, col="animal.l.", into=c("animal","season"), sep="
 corearea <- merge(corearea, hr_ca_skunks[hr_ca_skunks$size=="homerange",c("animal","group")], by.x="animal", by.y="animal", all.x=T)
 corearea$season <- factor(corearea$season, levels=c("spring","summer","fall"))
 corearea <- merge(corearea, num.locs, by.x=c("animal","season"), by.y=c("animalid","season"), all.x=T)
+
+table(hr[hr$Freq > 6,c("season","group")])
+#        group
+# season F1 M1 M2
+# spring  2  2  4
+# summer  3  3  2
+# fall    4  3  3
+
+#compare changes in home range size by animal
+#11 animals
+hr.wide <- pivot_wider(hr[,c("animal", "season", "est", "group")], names_from = season, values_from=est)
+hr.n.wide <- pivot_wider(hr[,c("animal", "season", "Freq", "group")], names_from = season, values_from=Freq)
+
+hr <- merge(hr, skunk.info.unique, by.x="animal", by.y="Animal.ID", all.x=T)
+hr$season <- factor(hr$season, levels=c("summer","fall","spring"))
+hr <- hr[order(hr$season),]
+
+p <- ggplot(hr, aes(x=season, y=est, col=animal, group=season)) + 
+  geom_line(aes(group=animal), lty="dashed", size=1, position=position_dodge2(width=0.25)) + 
+  geom_point(aes(size=mass), position=position_dodge2(width=0.25)) + 
+  geom_errorbar(aes(ymin=low, ymax=high), linewidth=0.5, width=0.25, position=position_dodge2(width=1)) +
+  theme_bw(base_size=20) + facet_wrap(~group, scales="free_x") + theme(panel.grid = element_blank()) + xlab("number of relocations") + ylab("home range size (km^2)") + coord_cartesian(ylim=c(0,75)) #by number of relocations
+p
+# ggsave(p, filename="Figures/ctmm_seasonal/seasonal_hr_changes_by_animal.tiff", dpi=400, height=7, width=12, units="in", compression="lzw")
+
+########################################################
+#HR overlap between seasons
+
+o <- overlap(AKDES)
+# write.csv(o$CI[,,"est"], file="Data/overlap_seasonal_estimates_2023-01-03.csv")
+
+o.est <- data.frame(o$CI[,,"est"])
+o.est$animalid <- row.names(o.est)
+o.est.long <- pivot_longer(o.est, !animalid, names_to="animalid2", values_to="overlap") #convert wide to long
+o.est.long$animalid2 <- gsub(o.est.long$animalid2, pattern="SG.", replacement="SG-")
+
+#same animal
+o.same <- o.est.long[o.est.long$animalid != o.est.long$animalid2,]
+o.same <- separate(o.same, col="animalid", remove=F, sep="[.]", into=c("a1","season1"))
+o.same <- separate(o.same, col="animalid2", remove=F, sep="[.]", into=c("a2","season2"))
+
+o.same <- o.same[o.same$a1 == o.same$a2,]
+o.same$season <- paste(o.same$season1, "\n", o.same$season2, sep="")
+o.same <- merge(o.same, hr_ca_skunks[hr_ca_skunks$size=="homerange",c("animal","group")], by.x="a1", by.y="animal", all.x=T)
+
+p <- ggplot(o.same[o.same$season %in% c("spring\nsummer","spring\nfall","summer\nfall"),]) + 
+  geom_path(aes(x=season, y=overlap*100, group=a1), position=position_dodge2(width=0.25)) + geom_point(aes(x=season, y=overlap*100, col=season), position=position_dodge2(width=0.25), size=3) + 
+  ylab("percent overlap between seasons") + theme_bw(base_size=20) + facet_wrap(~group) + theme(legend.position = "none")
+p
+
+ddply(o.same, .(season), summarize, mean=mean(overlap), sd=sd(overlap), n=length(overlap), se=sd(overlap)/sqrt(length(overlap)))
+
+3900/1824 #largest male average vs. largest male eastern spotted skunk home range: Lesmeister et al. 2009
+#2.1
+1630/1824
+#0.89
+
+1140/192 #largest female eastern spotted skunk home range: Lesmeister et al. 2009
+#5.9
+
+1630/61.1 #vs. MCP in dry season: Crooks and van vuren 1995
+#26.7
+1140/61.1
+#18.66
