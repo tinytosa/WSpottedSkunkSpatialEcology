@@ -22,7 +22,7 @@ skunk.info.unique <- ddply(skunk.info, .(Animal.ID, Sex), summarize,
 
 
 #skunk home range info
-hr_ca <- read.table("data/hr_ca_estimates.txt", sep=",", header=T)
+hr_ca <- read.table("data/HR_ctmm/hr_ca_estimates.txt", sep=",", header=T)
 
 hr <- hr_ca[hr_ca$size == "homerange",]
 ca <- hr_ca[hr_ca$size == "corearea",]
@@ -38,7 +38,7 @@ hr_ca[hr_ca$size=="homerange",] %>% group_by(group) %>% dplyr::summarize(min(est
 hr_ca[hr_ca$size=="homerange",] %>% group_by(group) %>% dplyr::summarize(mean(est), sd(est)/sqrt(length(est)))
 hr_ca[hr_ca$size=="corearea",] %>% group_by(group) %>% dplyr::summarize(mean(est), sd(est)/sqrt(length(est)))
 
-otherHRs <- read.csv("data/HRsizes_other_carnivores.csv")
+otherHRs <- read.csv("data/HR_ctmm/HRsizes_other_carnivores.csv")
 otherHRs <- otherHRs[otherHRs$sex != "",]
 otherHRs <- otherHRs[otherHRs$year >= 1995,]
 otherHRs$HR_km2 <- otherHRs$mean_HR..ha./100
@@ -64,7 +64,7 @@ ggplot(data=otherHRs, aes(x=mass..kg., y=HR_km2, group=species, col=species, sha
 ##############
 #2. Why are some home ranges larger than others?
 #extract info from GIS layers using packages raster, rgdal, sf
-data <- read.table("data/hr_env_covars_2023-05-02.txt", sep=",", header=T)
+data <- read.table("data/HR_ctmm/hr_env_covars_2023-05-02.txt", sep=",", header=T)
 
 #convert from raw counts to percent of home range for logging, mature, o80, oldgrowth
 data$p.log <- data$logging/data$totalpix*100

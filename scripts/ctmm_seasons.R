@@ -7,15 +7,15 @@ require(lubridate)
 
 #######################
 #load data
-hr_ca_skunks <- read.table(file="Data/hr_ca_estimates.txt", sep=",", header=T)
+hr_ca_skunks <- read.table(file="data/HR_ctmm/hr_ca_estimates.txt", sep=",", header=T)
 
 f <- c("SG-005", "SG-007", "SG-008", "SG-009", "SG-015", "SG-016", "SG-017","SG-018","SG-020") #females
 nad83z10 <- "+proj=utm +zone=10 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"
 
-load("data/DATA_all_skunks_error_2022-11-22.rda") #DATA file for all skunks with error ellipses (vhf + gps)
-load("data/FITS_all_skunks_error_2022-11-16.rda") #FITS file
+load("data/HR_ctmm/DATA_all_skunks_error_2022-11-22.rda") #DATA file for all skunks with error ellipses (vhf + gps)
+load("data/HR_ctmm/FITS_all_skunks_error_2022-11-16.rda") #FITS file
 
-skunk.info <- read.table("Data/AllSkunkCapts.txt", sep=",", header=T)
+skunk.info <- read.table("data/AllSkunkCapts.txt", sep=",", header=T)
 skunk.info.unique <- ddply(skunk.info, .(Animal.ID, Sex), summarize, 
                            mass=mean(Mass..g., na.rm=T), mass.min=min(Mass..g., na.rm=T), mass.max=max(Mass..g., na.rm=T),
                            length.total=mean(Length.Total..cm., na.rm=T))
@@ -71,7 +71,7 @@ ggplot(m) + geom_tile(aes(x=month, y=animalid, fill=group)) + theme_bw(base_size
 
 ###########################################################
 
-sk.locs <- read.table("data/as_telemetry_obj_vhf_2022-11-17.txt", sep=",", header=T)
+sk.locs <- read.table("data/HR_ctmm/as_telemetry_obj_vhf_2022-11-17.txt", sep=",", header=T)
 sk.locs$y <- year(sk.locs$timestamp)
 
 sk.spring <- sk.locs[month(sk.locs$timestamp) < 6 & month(sk.locs$timestamp) > 1,]
@@ -113,19 +113,19 @@ table(sk.fall[,c("individual.local.identifier","y")])
 # 
 # # SPRING <- DATA
 # names(SPRING) <- paste(names(SPRING), ".spring", sep="")
-# save(SPRING, file="Data/DATA-SPRING_all_skunks_error_2023-01-03.rda")
+# save(SPRING, file="data/HR_ctmm/DATA-SPRING_all_skunks_error_2023-01-03.rda")
 # # SUMMER <- DATA
 # names(SUMMER) <- paste(names(SUMMER), ".summer", sep="")
-# save(SUMMER, file="Data/DATA-SUMMER_all_skunks_error_2023-01-03.rda")
+# save(SUMMER, file="data/HR_ctmm/DATA-SUMMER_all_skunks_error_2023-01-03.rda")
 # # FALL <- DATA
 # names(FALL) <- paste(names(FALL), ".fall", sep="")
-# save(FALL, file="Data/DATA-FALL_all_skunks_error_2023-01-03.rda")
+# save(FALL, file="data/HR_ctmm/DATA-FALL_all_skunks_error_2023-01-03.rda")
 
 ###########################################################
 
-load("data/DATA-SPRING_all_skunks_error_2023-01-03.rda")
-load("data/DATA-SUMMER_all_skunks_error_2023-01-03.rda")
-load("data/DATA-FALL_all_skunks_error_2023-01-03.rda")
+load("data/HR_ctmm/DATA-SPRING_all_skunks_error_2023-01-03.rda")
+load("data/HR_ctmm/DATA-SUMMER_all_skunks_error_2023-01-03.rda")
+load("data/HR_ctmm/DATA-FALL_all_skunks_error_2023-01-03.rda")
 
 DATA <- c(SPRING, SUMMER, FALL) #combine spring, summer, and fall lists
 
@@ -142,10 +142,10 @@ for(i in 1:length(DATA))
 }
 names(FITS) <- names(DATA)
 
-# save(FITS, file="Data/FITS-SEASONS_all_skunks_error_2023-01-03.rda")
+# save(FITS, file="data/HR_ctmm/FITS-SEASONS_all_skunks_error_2023-01-03.rda")
 ###########################################################
 #calculate AKDEs with DATA and FITS files
-load("data/FITS-SEASONS_all_skunks_error_2023-01-03.rda")
+load("data/HR_ctmm/FITS-SEASONS_all_skunks_error_2023-01-03.rda")
 
 AKDES <- akde(DATA, FITS, weights=T) #must have verbose=F
 meta(AKDES, col=c(COL,'black'), sort=TRUE) #km^2
@@ -229,7 +229,7 @@ p
 #HR overlap between seasons
 
 o <- overlap(AKDES)
-# write.csv(o$CI[,,"est"], file="Data/overlap_seasonal_estimates_2023-01-03.csv")
+# write.csv(o$CI[,,"est"], file="data/HR_ctmm/overlap_seasonal_estimates_2023-01-03.csv")
 
 o.est <- data.frame(o$CI[,,"est"])
 o.est$animalid <- row.names(o.est)

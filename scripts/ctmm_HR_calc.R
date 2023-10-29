@@ -23,7 +23,7 @@ require(ggpubr)
 nad83z10 <- "+proj=utm +zone=10 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"
 
 sk.summary <- read.csv(file="data/sk_summary.csv", header=T)
-sk.locs <- read.table(file="data/as_telemetry_obj_vhf_2022-11-17.txt", sep=",", header=T)
+sk.locs <- read.table(file="data/HR_ctmm/as_telemetry_obj_vhf_2022-11-17.txt", sep=",", header=T)
 table(sk.locs$individual.local.identifier)
 
 DATA <- as.telemetry(sk.locs, projection=CRS(nad83z10))
@@ -49,8 +49,8 @@ plot(DATA, col=COL, lwd=2)
 ###########
 #GPS data
 
-gps.locs1 <- read.table("data/GPS_SG-011.txt", sep=",", header=T)
-gps.locs2 <- read.table("data/GPS_SG-019.txt", sep=",", header=T)
+gps.locs1 <- read.table("data/HR_ctmm/GPS_SG-011.txt", sep=",", header=T)
+gps.locs2 <- read.table("data/HR_ctmm/GPS_SG-019.txt", sep=",", header=T)
 
 GPS1 <- as.telemetry(gps.locs1, projection=CRS(nad83z10))
 GPS2 <- as.telemetry(gps.locs2, projection=CRS(nad83z10))
@@ -81,7 +81,7 @@ DATA[['SG-019']] <- tbind(DATA[['SG-019']], GPS2)
 plot(DATA, col=COL, lwd=2)
 table(sk.locs$individual.local.identifier)
 
-# save(DATA, file="data/ctmm/DATA_all_skunks_error_2022-11-22.rda")
+# save(DATA, file="data/HR_ctmm/DATA_all_skunks_error_2022-11-22.rda")
 
 FITS <- list()
 for(i in 1:length(DATA))
@@ -112,12 +112,12 @@ for(i in 1:length(DATA))
 }
 names(FITS) <- names(DATA)
 
-# save(FITS, file="Data/ctmm/FITS_all_skunks_error_2022-11-16.rda")
+# save(FITS, file="data/HR_ctmm/FITS_all_skunks_error_2022-11-16.rda")
 
 #############
-load("data/DATA_all_skunks_error_2022-11-22.rda")
+load("data/HR_ctmm/DATA_all_skunks_error_2022-11-22.rda")
 COL <- rainbow(length(DATA))
-load("data/FITS_all_skunks_error_2022-11-16.rda")
+load("data/HR_ctmm/FITS_all_skunks_error_2022-11-16.rda")
 
 AKDES <- akde(DATA, FITS, weights=T) #must have verbose=F
 
@@ -199,12 +199,12 @@ a$group <- paste(a$sex, a$cluster, sep="")
 a[a$group == "F2",]$group <- "F1"
 a$title <- paste(a$size, a$group)
 
-# write.table(a, file="Data/hr_ca_estimates.txt", sep=",", row.names=F)
+# write.table(a, file="data/HR_ctmm/hr_ca_estimates.txt", sep=",", row.names=F)
 
 ########################################################################
 
 ######################
-a <- read.table("Data/hr_ca_estimates.txt", sep=",", header=T)
+a <- read.table("data/HR_ctmm/hr_ca_estimates.txt", sep=",", header=T)
 a$cluster <- factor(a$cluster)
 
 #compare home range and core area size across groups

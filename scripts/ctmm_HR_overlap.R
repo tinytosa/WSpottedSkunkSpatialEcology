@@ -9,13 +9,13 @@ require(ggpubr)
 
 #######################
 #load data
-a <- read.table("data/hr_ca_estimates.txt", sep=",", header=T)
+a <- read.table("data/HR_ctmm/hr_ca_estimates.txt", sep=",", header=T)
 
 f <- c("SG-005", "SG-007", "SG-008", "SG-009", "SG-015", "SG-016", "SG-017","SG-018","SG-020") #females
 nad83z10 <- "+proj=utm +zone=10 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"
 
-load("data/DATA_all_skunks_error_2022-11-22.rda") #DATA file for all skunks with error ellipses (vhf + gps)
-load("data/FITS_all_skunks_error_2022-11-16.rda") #FITS file
+load("data/HR_ctmm/DATA_all_skunks_error_2022-11-22.rda") #DATA file for all skunks with error ellipses (vhf + gps)
+load("data/HR_ctmm/FITS_all_skunks_error_2022-11-16.rda") #FITS file
 
 ########################
 #calculate KDEs
@@ -61,7 +61,7 @@ o.est[o.est$sexes == "FM",]$sexes <- "MF"
 table(o.est$sexes)
 
 o.est$animals <- paste(o.est$animal1, o.est$animal2, sep=".") #combine names of animal 1 and animal 2
-# write.table(o.est, file="data/overlap_estimates_2022-11-20.txt", sep=",")
+# write.table(o.est, file="data/HR_ctmm/overlap_estimates_2022-11-20.txt", sep=",")
 
 #############
 #plot histograms for each skunk
@@ -92,7 +92,7 @@ p.hist
 o.min <- o.est %>% group_by(animal1, sexes) %>% slice_min(overlap)
 
 o.max <- o.est %>% group_by(animal1, sexes) %>% slice_max(overlap)
-# write.table(o.max, file="Data/ctmm/overlap_maximum_2022-11-20.txt", sep=",")
+# write.table(o.max, file="Data/HR_ctmm/overlap_maximum_2022-11-20.txt", sep=",")
 
 ddply(o.max, .(sexes), summarise, mean(overlap.low), mean(overlap), mean(overlap.high))
 #   sexes       ..1       ..2       ..3
