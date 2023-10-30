@@ -204,6 +204,47 @@ a$title <- paste(a$size, a$group)
 ########################################################################
 
 ######################
+#compare male vs. female home ranges
+m1 <- list(AKDES$`SG-002`, AKDES$`SG-006`, AKDES$`SG-011`, AKDES$`SG-013`, AKDES$`SG-021`, AKDES$`SG-023`, AKDES$`SG-025`)
+m2 <- list(AKDES$`SG-001`, AKDES$`SG-001_2`, AKDES$`SG-003`, AKDES$`SG-004`, AKDES$`SG-010`, AKDES$`SG-012`, AKDES$`SG-014`, AKDES$`SG-019`, AKDES$`SG-022`)
+f <- list(AKDES$`SG-005`, AKDES$`SG-007`, AKDES$`SG-008`, AKDES$`SG-009`,AKDES$`SG-015`,AKDES$`SG-016`,AKDES$`SG-017`,AKDES$`SG-018`,AKDES$`SG-020`)
+
+mf <- list(m1,m2,f)
+names(mf) <- c("male_1","male_2","female")
+
+#########
+#95% CI
+#########
+meta(mf)
+
+meta(m1)
+#                  low      est     high
+# mean (km²)  31.51919 35.82618 40.40497
+
+meta(m2)
+#                      low         est       high
+# mean (km²)  12.832055024 16.37602557 20.4908524
+
+meta(f)
+#                    low        est      high
+# mean (km²)  6.63150591 10.9279018 16.860766
+
+##########
+#50% CI
+##########
+meta(m1, level.UD=0.5)
+#                  low     est     high
+# mean (km²)  5.995584 6.81486 7.685838
+
+meta(m2, level.UD=0.5)
+#                    low       est      high
+# mean (km²)  2.67931753 3.5548200 4.6004284
+
+meta(f, level.UD=0.5)
+#                   low       est      high
+# mean (km²)  1.55328266 2.5163871 3.8320412
+
+######################
 a <- read.table("data/HR_ctmm/hr_ca_estimates.txt", sep=",", header=T)
 a$cluster <- factor(a$cluster)
 
